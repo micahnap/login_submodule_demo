@@ -2,50 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_login/flutter_login.dart';
 
-void main() => runApp(LoginWidget());
+void main() => runApp(ModularApp(module: MainLoginModule()));
 
 mixin Thing {
   List<String> labels = [];
   void doAthing(String thing);
 }
 
-class LoginWidget extends StatelessWidget {
-
-    void _onDriverPressed() {
-    print('test');
-  }
-  
+class MainLoginModule extends MainModule {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // set your initial route
-      navigatorKey: Modular.navigatorKey,
-      initialRoute: "/",
-      // add Modular to manage the routing system
-      onGenerateRoute: Modular.generateRoute,
-      home: Scaffold(
-      appBar: AppBar(
-        title: Text("Sample App"),
-      ),
-      body: Center(
-        child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          RaisedButton(
-            onPressed: _onDriverPressed,
-            child: Text("Passenger")
-         ),
-      SizedBox(height: 40),
-          RaisedButton(
-            onPressed: _onDriverPressed,
-            child: Text("Driver"),
-      ),
-        ],
-      ),
-      ),
-    )
-    );
-  }
+  List<Bind> get binds => [];
+
+  @override
+  List<Router> get routers => [
+    // Router("/", module: LoginModule()),
+  ];
+  @override
+  Widget get bootstrap => LoginScreen();
+}
+
+class LoginModule extends ChildModule {
+  @override
+  List<Bind> get binds => [];
+
+  @override
+  List<Router> get routers => [
+    Router("/", child: (_, args) => LoginScreen()),
+  ];
+
+  static Inject get to => Inject<LoginModule>.of();
 }
 
 class LoginScreen extends StatefulWidget {
@@ -82,15 +67,14 @@ class _LoginScreenState extends State<LoginScreen> {
   //   });
   // }
 
-    void _onDriverPressed() {
+    void _onLoginPressed() {
     print('test');
   }
 
   @override
   Widget build(BuildContext context) {
+    final thing = Modular.get<Thing>();
     return MaterialApp(
-      // set your initial route
-      //navigatorKey: Modular.navigatorKey,
       initialRoute: "/",
       // add Modular to manage the routing system
       onGenerateRoute: Modular.generateRoute,
@@ -106,21 +90,21 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       ListTile(
-        title: Text(widget.thing.labels[0]),
+        title: Text(thing.labels[0]),
         onTap: () {
-          widget.thing.doAthing('thing');
+          thing.doAthing('thing');
         },
       ),
       ListTile(
-        title: Text(widget.thing.labels[1]),
+        title: Text(thing.labels[1]),
         onTap: () {
-          widget.thing.doAthing('thing');
+          thing.doAthing('thing');
         },
       ),
             ListTile(
-        title: Text(widget.thing.labels[2]),
+        title: Text(thing.labels[2]),
         onTap: () {
-          widget.thing.doAthing('thing');
+          thing.doAthing('thing');
         },
       ),
     ],
@@ -148,7 +132,7 @@ TextField(
 ),
         SizedBox(height: 40),
         RaisedButton(
-            onPressed: _onDriverPressed,
+            onPressed: _onLoginPressed,
             child: Text("Login"),
       ),
         ],
